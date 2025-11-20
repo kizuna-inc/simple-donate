@@ -12,7 +12,7 @@ make a self-hosted donation site easier than it should be :D
   - CSS: Bootstrap 5
 
 - Production
-  - JS: React.js + vite.js + typescript
+  - JS: Next.js + typescript
   - CSS: tailwind.css
 
 ### BackEnd
