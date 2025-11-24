@@ -1,114 +1,15 @@
 import { Express, Request, Response } from "express";
 import { Server } from "socket.io";
-import { Jimp } from "jimp";
-import path, { dirname } from "path";
-import jsQR from "jsqr";
-import fs from "fs";
 
 import { responseInterface } from "../../interface/resp";
-import { ISlip2SureBankslip } from "../../interface/slip/type/bank";
+import { verifyPayload } from "../../interface/payload";
 
-import { upload } from "../../files/client";
 import { sQueue } from "../queue";
-import { slipClient } from "../../slip/client";
-import { payloadInterface } from "../../interface/payload";
+import { reResp } from "../../response/main";
+import { client } from "../../db/client";
+import { bankChecker } from "../../parser/bank";
 
 export const socketAPI = async (app: Express, io: Server) => {
-  // const root = path.resolve(__dirname, "../../../../", "/static/upload/slip");
-  const root = path.resolve(__dirname, "../../../../");
-
-  app.post(
-    "/api/socket/donate",
-    upload.single("slip"),
-    async (req: Request, res: Response) => {
-      const body = req.body;
-      const file = req.file;
-
-      let qrPayload: ISlip2SureBankslip | null = null;
-
-      let response: responseInterface = {
-        status: 0,
-        message: "",
-        payload: null,
-      };
-
-      if (file !== undefined && file !== null) {
-        let filePath = path.resolve(path.join(root, String(file.path)));
-        const readFile = fs.readFileSync(filePath); // Or you can use expressJS (Mutler,express-fileupload) for integration
-
-        const image = await Jimp.read(readFile);
-        const imgData = {
-          data: new Uint8ClampedArray(image.bitmap.data),
-          width: image.bitmap.width,
-          height: image.bitmap.height,
-        };
-
-        const decoded = jsQR(imgData.data, imgData.width, imgData.height);
-
-        if (!decoded) {
-          throw new Error("QR not found");
-        }
-
-        // Call API
-        qrPayload = await slipClient.bankSlip(String(decoded.data));
-
-        fs.rmSync(filePath);
-
-        if (body !== undefined && body !== null && body !== "") {
-          let userForm = ["name", "amount", "text"];
-
-          // Check Undefined..
-          for (let i = 0; i < userForm.length; i++) {
-            if (
-              body[userForm[i]] == null &&
-              body[userForm[i]] == undefined &&
-              body[userForm[i]] == ""
-            ) {
-              response.message = `${userForm[i]} is blank..`;
-
-              res.send(response);
-              return;
-            }
-          }
-
-          // Doing something to db now..
-          let finalPayload: payloadInterface = {
-            name: body[userForm[0]],
-            amount: body[userForm[1]],
-            text: body[userForm[2]],
-            verify: {
-              payload: qrPayload.info.payload,
-              transRef: qrPayload.info.transRef,
-              amount: qrPayload.info.amount,
-              transDateTime: qrPayload.info.transDateTime,
-              receiver: {
-                name: qrPayload.info.receiver.displayName,
-                type: qrPayload.info.receiver.account.type,
-                value: qrPayload.info.receiver.account.value,
-              },
-            },
-          };
-
-          // Check Name
-
-          // Check Account
-
-          // Check Amount
-          if (finalPayload.amount !== finalPayload.verify.amount) {
-            response.message = "amount not match";
-            res.send(response);
-            return;
-          }
-        }
-      } else {
-        response.message = "no slip got uploaded..";
-
-        res.send(response);
-        return;
-      }
-    }
-  );
-
   app.get("/api/socket/test", async (_: Request, res: Response) => {
     let response: responseInterface = {
       status: 1,
@@ -133,13 +34,120 @@ export const socketAPI = async (app: Express, io: Server) => {
     res.send(response);
   });
 
-  app.post(
-    "/api/socket/upload",
-    upload.single("slip"),
-    async (req: Request, res: Response) => {
-      let file = req.file;
+  app.post("/api/socket/donate", async (req: Request, res: Response) => {
+    const body = req.body;
+    const resp = new reResp();
 
-      res.send(file);
+    // Check body
+    if (body === null || body === undefined) {
+      resp.message = "blank body";
+      res.send(resp);
+      return;
     }
-  );
+
+    const {
+      name,
+      message,
+      amount,
+      method,
+      slip,
+    }: {
+      name: string;
+      message: string;
+      amount: number;
+      method: number;
+      slip: verifyPayload;
+    } = body;
+
+    if (name === "" || message === "" || amount <= 0 || method < 0) {
+      resp.message = "ยังมีบางช่องว่างอยู่ กรุณาลองใหม่อีกครั้ง";
+      res.send(resp);
+      return;
+    }
+
+    const config = await client.bankingConfig.findFirst({
+      where: {
+        type: method,
+      },
+    });
+
+    if (config === undefined || config === null) {
+      resp.message = `ผู้ใช้ยังตั้งค่าไม่สมบูรณ์ กรุณาติดต่อเจ้าของเว็บ..`;
+      return;
+    }
+
+    // Check Banking Detail
+    if (!bankChecker(config, slip)) {
+      resp.message = "ปลายทางของสลิปไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง... :)";
+      res.send(resp);
+      return;
+    }
+
+    // Check Amount
+    if (slip.amount !== amount) {
+      resp.message = "จำนวนเงินไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง";
+      res.send(resp);
+      return;
+    }
+
+    // Check Dupe record
+    const dupe = await client.transection.findFirst({
+      where: {
+        transactionID: slip.transRef,
+      },
+    });
+
+    if (dupe !== null) {
+      resp.message = "สลิปนี้เคยถูกใช้มาแล้ว กรุณาลองใหม่อีกครั้ง";
+
+      res.send(resp);
+      return;
+    }
+
+    try {
+      // Create Record
+      const record = await client.transection.create({
+        data: {
+          name: name,
+          message: message,
+          amount: amount,
+          transactionID: slip.transRef,
+        },
+      });
+
+      if (record === null) {
+        resp.message = "มีบางอย่างไม่คาดฝันเกิดขึ้น กรุณาติดต่อผู้ดูแลระบบ..";
+        res.send(resp);
+        return;
+      }
+
+      // Send Socket
+      const payload = {
+        username: name,
+        money: parseFloat(String(amount)).toFixed(2),
+        template: {
+          image: "",
+          text: "thank you for",
+        },
+      };
+
+      console.log(payload);
+
+      await sQueue.add(
+        `${process.env.ROOM_NAME || "simple-donate"}_screen`,
+        payload
+      );
+
+      resp.status = 1;
+      resp.message = "Transaction created!!";
+
+      res.send(resp);
+    } catch (e: unknown) {
+      var error = e as Error;
+
+      resp.message = "Error : " + error.message;
+      res.send(resp);
+      return;
+    }
+  });
 };
