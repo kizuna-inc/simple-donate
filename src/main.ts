@@ -1,4 +1,5 @@
 import './assets/main.css'
+import 'sweetalert2/src/sweetalert2.scss'
 
 import { createApp } from 'vue'
 import App from './App.vue'
