@@ -49,3 +49,7 @@ dist
 
 # Prisma
 src/generated
+
+# Static ignored
+static/upload/cdn/*
+static/upload/slip/*
