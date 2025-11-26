@@ -23,7 +23,7 @@
     <script src="/src/js/animation.js"></script>
 
     <script type="module">
-      const socket = io("localhost:1920", {
+      const socket = io(`${config.server}`, {
         transports: ["websocket"],
       });
 
