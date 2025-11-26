@@ -1,3 +1,4 @@
 const config = {
-  room: "dethz",
+  server: "localhost:3000",
+  room: "live-tester",
 };

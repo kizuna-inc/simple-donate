@@ -1,0 +1,12 @@
+services:
+  socket-nginx:
+    container_name: socket-nginx
+    build:
+      context: .
+      dockerfile: DockerFile
+    ports:
+      - 8000:80
+    environment:
+      server: "localhost:1920"
+      room_name: "not_live"
+    # restart: always

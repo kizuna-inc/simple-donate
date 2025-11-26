@@ -1,0 +1,16 @@
+FROM nginx
+
+ENV server 'localhost:3000'
+ENV room_name 'live'
+
+WORKDIR /usr/share/nginx/html
+COPY index.html .
+COPY setup.sh .
+COPY src ./src
+COPY screen ./screen
+
+# RUN 'ls'
+
+CMD ["sh", "-c", "/usr/share/nginx/html/setup.sh && nginx -g daemon off;"]
+
+EXPOSE 80
