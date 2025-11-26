@@ -1,0 +1,23 @@
+FROM --platform="linux/amd64" node:24-alpine AS build
+
+ARG NODE_ENV="production"
+ARG VITE_API_ENDPOINT
+
+WORKDIR /app
+COPY . ./
+
+RUN npm i -g pnpm
+RUN pnpm i
+
+RUN echo "VITE_API_ENDPOINT=${VITE_API_ENDPOINT}" > .env
+
+RUN pnpm run build-only --mode ${NODE_ENV}
+
+# ======================================
+
+FROM nginx AS serve
+
+WORKDIR /usr/share/nginx/html
+COPY --from=build /app/dist .
+
+EXPOSE 80
