@@ -4,7 +4,8 @@ import bodyParser from "body-parser";
 import path from "path";
 
 const corsConfig = {
-  origin: "*",
+  origin: [/^http:\/\/localhost(:[\d]+)?$/, /^https?:\/\/.*\.orb\.local$/],
+  optionsSuccessStatus: 200,
 };
 
 let staticPath = path.resolve(__dirname, "../static");

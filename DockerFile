@@ -1,0 +1,17 @@
+# Build stage
+FROM node:24-alpine AS build
+ARG DATABASE_URL
+
+WORKDIR /app
+COPY . ./
+
+RUN corepack enable pnpm
+
+RUN echo "DATABASE_URL=${DATABASE_URL}" > .env
+# RUN pnpm i
+RUN pnpm i --frozen-lockfile
+RUN pnpm build
+
+RUN chmod +x start.sh
+
+CMD ["./start.sh"]
