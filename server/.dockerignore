@@ -1,0 +1,19 @@
+# Prisma
+src/generated
+
+node_modules
+
+# Static ignored
+static/upload/cdn/*
+static/upload/slip/*
+
+# local env files
+.env
+.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# vercel
+.vercel
