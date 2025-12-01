@@ -46,7 +46,11 @@ dist
 
 # Prisma
 src/generated
+prisma/migrations/*
+!prisma/migrations/20251201174926_simple_donate
+!prisma/migrations/*.toml
 
 # Static ignored
 static/upload/cdn/*
+!static/upload/cdn/alert.gif
 static/upload/slip/*
