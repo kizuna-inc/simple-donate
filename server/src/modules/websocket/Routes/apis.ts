@@ -8,6 +8,7 @@ import { sQueue } from "../queue";
 import { reResp } from "../../response/main";
 import { client } from "../../db/client";
 import { bankChecker } from "../../parser/bank";
+import { streamTemplate } from "../../db/mock";
 
 export const socketAPI = async (app: Express, io: Server) => {
   app.get("/api/socket/test", async (_: Request, res: Response) => {
@@ -20,10 +21,8 @@ export const socketAPI = async (app: Express, io: Server) => {
     const testPayload = {
       username: "test",
       money: 10.0,
-      template: {
-        image: "",
-        text: "thank you for",
-      },
+      message: "test donation alert!",
+      template: streamTemplate,
     };
 
     await sQueue.add(
@@ -125,10 +124,8 @@ export const socketAPI = async (app: Express, io: Server) => {
       const payload = {
         username: name,
         money: parseFloat(String(amount)).toFixed(2),
-        template: {
-          image: "",
-          text: "thank you for",
-        },
+        message: message,
+        template: streamTemplate,
       };
 
       console.log(payload);

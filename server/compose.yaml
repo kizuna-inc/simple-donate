@@ -1,4 +1,20 @@
 services:
+  backend:
+    container_name: backend
+    build:
+      context: .
+      dockerfile: DockerFile
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy # Wait for PG to be ready to accept connections
+      redis:
+        condition: service_started
+    restart: on-failure
+
   db:
     image: postgres:14-alpine
     restart: always
@@ -23,22 +39,6 @@ services:
       - "6379:6379" # Maps host port 6379 to container port 6379
     volumes:
       - redis_data:/data # Persist Redis data to a named volume
-
-  backend:
-    container_name: backend
-    build:
-      context: .
-      dockerfile: DockerFile
-    ports:
-      - 3000:3000
-    env_file:
-      - .env.local
-    depends_on:
-      db:
-        condition: service_healthy # Wait for PG to be ready to accept connections
-      redis:
-        condition: service_started
-    restart: always
 
 volumes:
   redis_data:
