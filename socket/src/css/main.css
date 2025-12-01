@@ -36,10 +36,12 @@ body {
 }
 
 .donate-item {
-  width: 22rem;
+  max-width: 50dvh;
   height: auto;
+  padding: 1rem;
 
   background: rgba(0, 0, 0, 0.4);
+  color: whitesmoke;
 
   display: flex;
   flex-direction: column;
@@ -50,7 +52,17 @@ body {
   margin-left: auto;
   margin-right: auto;
 
+  border-radius: 1rem;
+
   position: fixed;
   left: 50%;
   transform: translate(-50%, 0);
+
+  h1, h3 {
+    margin: 0;
+  }
+
+  h3 {
+    font-size: 22px;
+  }
 }

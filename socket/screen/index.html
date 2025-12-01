@@ -11,8 +11,11 @@
     <!-- Donate Slot -->
     <div class="item-container" id="donate-box">
       <div class="donate-item donate-base">
-        <div class="image"></div>
-        item
+        <div class="image">
+          <img alt="donate dinggg" />
+        </div>
+        <h1></h1>
+        <h3></h3>
       </div>
     </div>
 
@@ -32,14 +35,28 @@
       });
 
       socket.on(`${config.room}_screen`, (msg) => {
+        const data = JSON.parse(JSON.stringify(msg));
+        console.log(data);
+
         let item = document.querySelector(".donate-item");
+
+        const imgElement = document.querySelector(".donate-item .image img");
+        const imageLocation = `http://${config.server}/${data.template.image}`;
+        
+        imgElement.setAttribute("src", imageLocation);
+
+        const textElement = document.querySelector(".donate-item h1");
+        const textLocation = `${data.template.text[0]} ${data.username} ${data.template.text[1]} ${parseFloat(data.money).toFixed(2)}`;
+        
+        textElement.innerHTML = textLocation
+
+        document.querySelector(".donate-item h3").innerHTML = data.message
+
         fadeIn(item);
 
         setTimeout(() => {
           fadeOut(item);
-        }, 1500);
-
-        console.log(msg);
+        }, 2500);
       });
 
       socket.on("disconnect", () => {
