@@ -7,8 +7,8 @@ services:
     ports:
       - 8000:80
     environment:
-      server: "backend server"
-      room_name: "room name" # set it same with backend
+      server: "localhost:3000"
+      room_name: "demo" # set it same with backend
     restart: always
 
   frontend:
@@ -17,9 +17,9 @@ services:
       context: ./frontend
       dockerfile: DockerFile
       args:
-        VITE_API_ENDPOINT: "backend server"
+        VITE_API_ENDPOINT: "http://localhost:3000"
     ports:
-      - 5173:80
+      - 4173:4173
     restart: always
 
   backend:
@@ -30,12 +30,14 @@ services:
     ports:
       - 3000:3000
     environment:
-      - ROOM_NAME="demo"
-      - DATABASE_URL="postgresql://user:pwd@localhost:5432/mydb?schema=public" # postgres connection string
-      - reIP="redis ip"
-      - rePort="redis port"
-      - slipKEY="slip2sure API-key"
+      - ROOM_NAME="demo" # Room name to sync with socket
+      - DATABASE_URL="postgresql://username:password@db:5432/mydb?schema=public" # postgres connection string
+      - reIP="redis"
+      - rePort="6379"
+      - slipKEY="" # Slip 2 Sure API KEY
       - JWT_SECERT="" # using openssl rand -hex 12
+    # env_file:
+    #   - server/.env
     depends_on:
       db:
         condition: service_healthy # Wait for PG to be ready to accept connections
@@ -53,7 +55,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data # Mount the named volume to the data directory
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U username -d donate"]
       interval: 5s
@@ -61,12 +63,12 @@ services:
       retries: 5
 
   redis:
-    image: redis:latest # Or a specific version like redis:7.4-alpine
+    image: redis:latest
     restart: always
     ports:
-      - "6379:6379" # Maps host port 6379 to container port 6379
+      - "6379:6379"
     volumes:
-      - redis_data:/data # Persist Redis data to a named volume
+      - redis_data:/data
 
 volumes:
   redis_data:
