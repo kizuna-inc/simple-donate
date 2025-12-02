@@ -1,23 +1,19 @@
-FROM --platform="linux/amd64" node:24-alpine AS build
+FROM node:24-alpine
 
 ARG NODE_ENV="production"
 ARG VITE_API_ENDPOINT
 
 WORKDIR /app
-COPY . ./
+COPY . .
 
-RUN npm i -g pnpm
-RUN pnpm i
+RUN corepack enable pnpm
+
+RUN pnpm i --frozen-lockfile
 
 RUN echo "VITE_API_ENDPOINT=${VITE_API_ENDPOINT}" > .env
 
 RUN pnpm run build-only --mode ${NODE_ENV}
 
-# ======================================
+EXPOSE 4173
 
-FROM nginx AS serve
-
-WORKDIR /usr/share/nginx/html
-COPY --from=build /app/dist .
-
-EXPOSE 80
+CMD ["sh", "-c", "pnpm run preview --host"]
