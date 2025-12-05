@@ -52,5 +52,5 @@ prisma/migrations/*
 
 # Static ignored
 static/upload/cdn/*
-!static/upload/cdn/alert.gif
+!static/upload/cdn/alert.*
 static/upload/slip/*
