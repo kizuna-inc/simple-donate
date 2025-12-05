@@ -4,11 +4,14 @@ services:
     build:
       context: ./socket
       dockerfile: DockerFile
+      args:
+        server: "backend-domain-name"
+        room_name: "dethz" # set it same with backend
+    networks:
+      simple_network:
+        ipv4_address: 172.30.10.12
     ports:
-      - 8000:80
-    environment:
-      server: "localhost:3000"
-      room_name: "demo" # set it same with backend
+      - 8001:80
     restart: always
 
   frontend:
@@ -17,7 +20,10 @@ services:
       context: ./frontend
       dockerfile: DockerFile
       args:
-        VITE_API_ENDPOINT: "http://localhost:3000"
+        VITE_API_ENDPOINT: "https://backend-domain-name"
+    networks:
+      simple_network:
+        ipv4_address: 172.30.10.11
     ports:
       - 4173:4173
     restart: always
@@ -29,15 +35,18 @@ services:
       dockerfile: DockerFile
     ports:
       - 3000:3000
-    environment:
-      - ROOM_NAME="demo" # Room name to sync with socket
-      - DATABASE_URL="postgresql://username:password@db:5432/mydb?schema=public" # postgres connection string
-      - reIP="redis"
-      - rePort="6379"
-      - slipKEY="" # Slip 2 Sure API KEY
-      - JWT_SECERT="" # using openssl rand -hex 12
-    # env_file:
-    #   - server/.env
+    networks:
+      simple_network:
+        ipv4_address: 172.30.10.10
+    # environment:
+    #   - ROOM_NAME="demo" # Room name to sync with socket
+    #   - DATABASE_URL="postgresql://username:password@db:5432/mydb?schema=public" # postgres connection string
+    #   - reIP="redis"
+    #   - rePort="6379"
+    #   - slipKEY="" # Slip 2 Sure API KEY
+    #   - JWT_SECERT="" # using openssl rand -hex 12
+    env_file:
+      - server/.env
     depends_on:
       db:
         condition: service_healthy # Wait for PG to be ready to accept connections
@@ -56,6 +65,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      simple_network:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U username -d donate"]
       interval: 5s
@@ -65,6 +76,8 @@ services:
   redis:
     image: redis:latest
     restart: always
+    networks:
+      simple_network:
     ports:
       - "6379:6379"
     volumes:
@@ -75,3 +88,11 @@ volumes:
     driver: local
   postgres_data:
     driver: local
+
+networks:
+  simple_network:
+    name: simple_network
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.30.10.0/24
