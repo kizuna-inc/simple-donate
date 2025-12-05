@@ -19,6 +19,8 @@
       </div>
     </div>
 
+    <audio src="" id="alert" style="display: hidden;" autoplay></audio>
+
     <!-- Scripts -->
     <script src="/src/js/socket.io.min.js"></script>
     <script src="/src/js/config.js"></script>
@@ -36,7 +38,6 @@
 
       socket.on(`${config.room}_screen`, (msg) => {
         const data = JSON.parse(JSON.stringify(msg));
-        console.log(data);
 
         let item = document.querySelector(".donate-item");
 
@@ -53,6 +54,7 @@
         document.querySelector(".donate-item h3").innerHTML = data.message
 
         fadeIn(item);
+        document.querySelector('#alert').src = `http://${config.server}/${data.template.sound}`;
 
         setTimeout(() => {
           fadeOut(item);
