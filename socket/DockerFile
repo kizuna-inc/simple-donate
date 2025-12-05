@@ -1,7 +1,7 @@
 FROM nginx
 
-ENV server 'localhost:3000'
-ENV room_name 'live'
+ARG server 'localhost:3000'
+ARG room_name 'live'
 
 WORKDIR /usr/share/nginx/html
 COPY index.html .
@@ -9,8 +9,6 @@ COPY setup.sh .
 COPY src ./src
 COPY screen ./screen
 
-# RUN 'ls'
-
-CMD ["sh", "-c", "/usr/share/nginx/html/setup.sh && nginx -g daemon off;"]
+RUN echo 'const config = {server: "'${server}'", room: "'${room_name}'"};' > /usr/share/nginx/html/src/js/config.js
 
 EXPOSE 80
