@@ -17,3 +17,13 @@ static/upload/slip/*
 
 # vercel
 .vercel
+
+.DS_Store
+
+# DockerFiles
+compose.yaml
+DockerFile
+
+# Git Folder
+.git
+.gitignore
