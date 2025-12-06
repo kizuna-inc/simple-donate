@@ -4,7 +4,11 @@ import bodyParser from "body-parser";
 import path from "path";
 
 const corsConfig = {
-  origin: [/^http:\/\/localhost(:[\d]+)?$/, /^https?:\/\/.*\.orb\.local$/],
+  origin: [
+    /^http:\/\/localhost(:[\d]+)?$/,
+    /^https?:\/\/.*\.orb\.local$/,
+    String(process.env.FRONT_URI),
+  ],
   optionsSuccessStatus: 200,
 };
 
