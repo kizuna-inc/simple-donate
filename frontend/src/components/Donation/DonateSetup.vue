@@ -208,14 +208,12 @@ const submitHandler = async () => {
 }
 
 onMounted(() => {
-  setTimeout(() => {
-    if (props.user !== null) {
-      bgLink.value = `${import.meta.env.VITE_API_ENDPOINT}/${props.user.backgroundImage}`
-      pfpLink.value = `${import.meta.env.VITE_API_ENDPOINT}/${props.user.profileImage}`
+  if (props.user !== null) {
+    bgLink.value = `${import.meta.env.VITE_API_ENDPOINT}/${props.user.backgroundImage}`
+    pfpLink.value = `${import.meta.env.VITE_API_ENDPOINT}/${props.user.profileImage}`
 
-      qrCodeGen()
-    }
-  }, 1000)
+    qrCodeGen()
+  }
 })
 
 watch(amount, () => {
