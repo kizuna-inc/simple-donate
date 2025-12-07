@@ -1,2 +1,6 @@
 compose-local.yaml
 .DS_Store
+files/backend/static/upload/slip
+files/backend/static/upload/cdn/*
+!files/backend/static/upload/cdn/alert.gif
+!files/backend/static/upload/cdn/alert.mp3
