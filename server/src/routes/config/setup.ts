@@ -72,7 +72,10 @@ export const setUpRoutes = async (app: Express) => {
 
     // ### Detail Handling ###
     const { name, description, profileImage, backgroundImage } = req.body;
-    const staticPath = path.resolve(__dirname, `../../../`);
+    const staticPath = path.resolve(
+      __dirname,
+      process.env.MODE === "PROD" ? `../../../../` : `../../../`
+    );
 
     // Name
     if (name === undefined || name === null || name === "") {
