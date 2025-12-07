@@ -12,12 +12,17 @@ const corsConfig = {
   optionsSuccessStatus: 200,
 };
 
-let staticPath = path.resolve(__dirname, "../static");
+let staticPath = path.resolve(
+  __dirname,
+  process.env.MODE === "PROD" ? "../../static" : "../static"
+);
 
 export const Middleware = async (app: Express) => {
   app.use(cors(corsConfig));
 
   app.use("/static", express.static(staticPath));
+  console.log(process.env.MODE);
+  console.log(staticPath);
 
   app.use(bodyParser.json({ limit: "50mb" }));
   app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));

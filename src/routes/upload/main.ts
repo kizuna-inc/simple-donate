@@ -13,7 +13,10 @@ import { imgUpload, upload } from "../../modules/files/client";
 import { reResp, ResponsiveResp } from "../../modules/response/main";
 
 export const uploadRoutes = async (app: Express) => {
-  const root = path.resolve(__dirname, "../../../");
+  const root = path.resolve(
+    __dirname,
+    process.env.MODE === "PROD" ? "../../../../" : "../../../"
+  );
 
   app.post(
     "/api/upload/image",
@@ -49,7 +52,7 @@ export const uploadRoutes = async (app: Express) => {
 
       const filePath = path.resolve(
         __dirname,
-        "../../../",
+        process.env.MODE === "PROD" ? "../../../../" : "../../../",
         req.file.destination
       );
 
