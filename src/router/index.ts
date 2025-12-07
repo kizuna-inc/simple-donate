@@ -33,12 +33,12 @@ const router = createRouter({
       children: [
         {
           path: '',
-          name: 'dashboard',
+          name: 'admin dashboard',
           component: DashboardView,
         },
         {
           path: 'history',
-          name: 'transaction',
+          name: 'admin history',
           component: HistoryView,
         },
       ],
@@ -54,6 +54,25 @@ const router = createRouter({
       component: ErrorView,
     },
   ],
+})
+
+// Route Protection
+router.beforeEach(async (to, _from) => {
+  if (new RegExp(/admin [a-zA-Z]+/gm).test(String(to.name))) {
+    if (
+      window.sessionStorage.getItem('token') === null ||
+      window.sessionStorage.getItem('token') === undefined
+    ) {
+      return { name: 'login' }
+    }
+  } else if (to.name === 'login') {
+    if (
+      window.sessionStorage.getItem('token') !== null &&
+      window.sessionStorage.getItem('token') !== undefined
+    ) {
+      return { name: 'admin dashboard' }
+    }
+  }
 })
 
 export default router
