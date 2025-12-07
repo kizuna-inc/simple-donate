@@ -46,6 +46,7 @@ services:
       - slipKEY="" # Slip 2 Sure API KEY
       - JWT_SECERT="" # using openssl rand -hex 12
       - FRONT_URI="https://frontend-domain-name"
+      - MODE="PROD" # NOT CHANGE THIS VALUE!!
     # env_file:
     #   - server/.env
     depends_on:
