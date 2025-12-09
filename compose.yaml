@@ -6,7 +6,7 @@ services:
       dockerfile: DockerFile
       args:
         server: "backend-domain-name"
-        room_name: "dethz" # set it same with backend
+        room_name: "demo" # set it same with backend
     networks:
       simple_network:
         ipv4_address: 172.30.10.12
@@ -40,7 +40,7 @@ services:
         ipv4_address: 172.30.10.10
     environment:
       - ROOM_NAME="demo" # Room name to sync with socket
-      - DATABASE_URL="postgresql://username:password@db:5432/mydb?schema=public" # postgres connection string
+      - DATABASE_URL="postgresql://username:password@db:5432/donate?schema=public" # postgres connection string
       - reIP="redis"
       - rePort="6379"
       - slipKEY="" # Slip 2 Sure API KEY
