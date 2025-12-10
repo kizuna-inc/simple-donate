@@ -1,0 +1,47 @@
+services:
+  backend:
+    container_name: backend
+    build:
+      context: .
+      dockerfile: DockerFile
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy # Wait for PG to be ready to accept connections
+      redis:
+        condition: service_started
+    restart: on-failure
+
+  db:
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=donate
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Mount the named volume to the data directory
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U username -d donate"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:latest # Or a specific version like redis:7.4-alpine
+    restart: always
+    ports:
+      - "6379:6379" # Maps host port 6379 to container port 6379
+    volumes:
+      - redis_data:/data # Persist Redis data to a named volume
+
+volumes:
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
