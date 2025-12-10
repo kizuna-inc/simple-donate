@@ -1,48 +1,48 @@
-# Simple Donate
+# SimpleDonate FrontEnd
 
-make a self-hosted donation site easier than it should be :D
+just a prototype version of simple donate :D
 
-## Table of Content
+## Recommended IDE Setup
 
-- [Simple Donate](#simple-donate)
-  - [Table of Content](#table-of-content)
-  - [Tech Stats](#tech-stats)
-    - [FrontEnd](#frontend)
-    - [BackEnd](#backend)
-  - [Installation \& Usage (with documentation)](#installation--usage-with-documentation)
+[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-## Tech Stats
+## Recommended Browser Setup
 
-### FrontEnd
+- Chromium-based browsers (Chrome, Edge, Brave, etc.):
+  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
+  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
+- Firefox:
+  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
+  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
 
-- Prototype
+## Type Support for `.vue` Imports in TS
 
-  - JS: Vue.js + typescript + vite.js
-  - CSS: Bootstrap 5
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
 
-- Production
+## Customize configuration
 
-  - JS: Next.js + typescript
-  - CSS: tailwind.css
+See [Vite Configuration Reference](https://vite.dev/config/).
 
-- Streaming Overlay
-  - HTML, CSS, JS (Vanilla + Socket.io) // >:D
+## Project Setup
 
-### BackEnd
+```sh
+pnpm install
+```
 
-- express.js, typescript
-- ORM
-  - Prisma
-- DB
-  - PostgreSQL
+### Compile and Hot-Reload for Development
 
-## Installation & Usage (with documentation)
+```sh
+pnpm dev
+```
 
-For the documentation, I really recommend to read on the website by click [here](https://sd.kizuna.zip/docs)
+### Type-Check, Compile and Minify for Production
 
----
+```sh
+pnpm build
+```
 
-Project Maintainer:
+### Lint with [ESLint](https://eslint.org/)
 
-- [Kizuna Inc](https://github.com/kizuna-inc) as Organization
-- [Suphakit P.](https://github.com/dethMastery) as Head Developer
+```sh
+pnpm lint
+```

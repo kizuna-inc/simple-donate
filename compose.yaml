@@ -1,100 +1,14 @@
 services:
-  socket-nginx:
-    container_name: socket-nginx
-    build:
-      context: ./socket
-      dockerfile: DockerFile
-      args:
-        server: "backend-domain-name"
-        room_name: "demo" # set it same with backend
-    networks:
-      simple_network:
-        ipv4_address: 172.30.10.12
-    ports:
-      - 8001:80
-    restart: always
-
   frontend:
     container_name: vue-prototype
     build:
-      context: ./frontend
+      context: .
       dockerfile: DockerFile
-      args:
-        VITE_API_ENDPOINT: "https://backend-domain-name"
-    networks:
-      simple_network:
-        ipv4_address: 172.30.10.11
     ports:
       - 4173:4173
+    # env:
+    #   VITE_API_ENDPOINT: 'http://localhost:1920'
+    #   VITE_API_TURNSTILE_SITE_KEY: '<TURNSTILE API KEY>'
+    env_file:
+      - ./.env
     restart: always
-
-  backend:
-    container_name: backend
-    build:
-      context: ./server
-      dockerfile: DockerFile
-    ports:
-      - 3000:3000
-    networks:
-      simple_network:
-        ipv4_address: 172.30.10.10
-    environment:
-      - ROOM_NAME="demo" # Room name to sync with socket
-      - DATABASE_URL="postgresql://username:password@db:5432/donate?schema=public" # postgres connection string
-      - reIP="redis"
-      - rePort="6379"
-      - slipKEY="" # Slip 2 Sure API KEY
-      - JWT_SECERT="" # using openssl rand -hex 12
-      - FRONT_URI="https://frontend-domain-name"
-      - MODE="PROD" # NOT CHANGE THIS VALUE!!
-    # env_file:
-    #   - server/.env
-    depends_on:
-      db:
-        condition: service_healthy # Wait for PG to be ready to accept connections
-      redis:
-        condition: service_started
-    restart: always
-
-  db:
-    image: postgres:14-alpine
-    restart: always
-    environment:
-      - POSTGRES_USER=username
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=donate
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      simple_network:
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U username -d donate"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  redis:
-    image: redis:latest
-    restart: always
-    networks:
-      simple_network:
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-
-volumes:
-  redis_data:
-    driver: local
-  postgres_data:
-    driver: local
-
-networks:
-  simple_network:
-    name: simple_network
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.30.10.0/24
