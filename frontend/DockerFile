@@ -1,7 +1,6 @@
 FROM node:24-alpine
 
 ARG NODE_ENV="production"
-ARG VITE_API_ENDPOINT
 
 WORKDIR /app
 COPY . .
@@ -9,8 +8,6 @@ COPY . .
 RUN corepack enable pnpm
 
 RUN pnpm i --frozen-lockfile
-
-RUN echo "VITE_API_ENDPOINT=${VITE_API_ENDPOINT}" > .env
 
 RUN pnpm run build-only --mode ${NODE_ENV}
 
