@@ -6,4 +6,5 @@ export class DonatePayloadClass {
   amount: number = 0
   method: number = 0
   slip: slipInterface | null = null
+  token: string | null = null
 }

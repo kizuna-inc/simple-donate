@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { isRef, onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { anyId } from 'promptparse/generate'
 import QRCode from 'qrcode-svg'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
+import VueTurnstile from 'vue-turnstile'
 
 import '@/assets/css/donate.css'
 
@@ -28,6 +29,7 @@ const props = defineProps<{
 const name = ref<string>('')
 const message = ref<string>('')
 const amount = ref<number | ''>(10)
+const token = ref<string>('')
 
 const type = ref<'MSISDN' | 'NATID' | 'EWALLETID' | 'BANKACC'>('MSISDN')
 const qrCode = ref<string>('')
@@ -43,6 +45,7 @@ const isSubmit = ref<boolean>(false)
 
 const bgLink = ref<string>('')
 const pfpLink = ref<string>('')
+const siteKey = ref<string>(import.meta.env.VITE_TURNSTILE_SITE_KEY)
 
 const slipStore = async (file: File) => {
   const buffer = await file.arrayBuffer()
@@ -166,33 +169,16 @@ const submitHandler = async () => {
     'slip',
     new File([slipImage.value], `profile.${slipImage.value.type.split('/').reverse()[0]}`),
   )
-
-  const checkSlip = (
-    await axios({
-      method: 'post',
-      url: `${import.meta.env.VITE_API_ENDPOINT}/api/upload/slip`,
-      data: slipUploadForm,
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
-  ).data
-
-  const slipPayload = checkSlip.payload as slipInterface
-
-  const payload = new DonatePayloadClass()
-
-  payload.name = name.value
-  payload.message = message.value
-  payload.amount = amount.value
-  payload.method = Number(props.bank?.type)
-  payload.slip = slipPayload
+  slipUploadForm.append('name', name.value)
+  slipUploadForm.append('message', message.value)
+  slipUploadForm.append('amount', String(amount.value))
+  slipUploadForm.append('token', token.value)
 
   const donateSend = await (
     await fetch(`${import.meta.env.VITE_API_ENDPOINT}/api/socket/donate`, {
       method: 'post',
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      }),
-      body: JSON.stringify(payload),
+      headers: new Headers({}),
+      body: slipUploadForm,
     })
   ).json()
 
@@ -302,7 +288,6 @@ const slipDragLeave = (e: DragEvent) => {
                 </div>
 
                 <div class="qr-verifier">
-                  <!-- Profile Upload -->
                   <div
                     @dragover.prevent="slipDragOver"
                     @dragleave.prevent="slipDragLeave"
@@ -331,6 +316,19 @@ const slipDragLeave = (e: DragEvent) => {
                     />
                   </div>
                 </div>
+
+                <VueTurnstile
+                  :site-key="siteKey"
+                  v-model="token"
+                  theme="dark"
+                  appearance="always"
+                  style="
+                    width: fit-content;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                />
 
                 <button class="submit-btn" submit="submitHandler()">โดเนทเลย!</button>
               </div>
