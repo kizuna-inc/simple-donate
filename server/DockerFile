@@ -1,0 +1,13 @@
+# Build stage
+FROM node:24-alpine
+
+WORKDIR /app
+COPY . .
+
+RUN corepack enable pnpm
+
+RUN pnpm i --frozen-lockfile
+
+CMD ["sh", "-c", "pnpm run db:deploy && pnpm run start"]
+
+# CMD ["node", "dist/app.js"]

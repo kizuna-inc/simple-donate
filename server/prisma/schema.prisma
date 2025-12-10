@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model BankingConfig {
+  id        Int      @id @default(autoincrement())
+  name      String
+  type      Int
+  no        String
+  bank      String
+  user_id   Int
+  create_at DateTime @default(now()) @db.Timestamptz(6)
+  update_at DateTime @default(now()) @db.Timestamptz(6)
+  User      User     @relation(fields: [user_id], references: [id])
+}
+
+model Transection {
+  id            String   @id @db.Uuid @default(uuid())
+  name          String
+  amount        Int
+  transactionID String   @unique
+  create_at     DateTime @default(now()) @db.Timestamptz(6)
+  message       String
+}
+
+model User {
+  id            Int             @id @default(autoincrement())
+  username      String          @unique
+  password      String
+  create_at     DateTime        @default(now()) @db.Timestamptz(6)
+  update_at     DateTime        @default(now()) @db.Timestamptz(6)
+  BankingConfig BankingConfig[]
+  UserConfig    UserConfig[]
+}
+
+model UserConfig {
+  id              Int      @id @default(autoincrement())
+  user_id         Int
+  name            String
+  description     String
+  profileImage    String
+  backgroundImage String
+  create_at       DateTime @default(now()) @db.Timestamptz(6)
+  update_at       DateTime @default(now()) @db.Timestamptz(6)
+  User            User     @relation(fields: [user_id], references: [id])
+}
