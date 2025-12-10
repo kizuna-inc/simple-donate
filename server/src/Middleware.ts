@@ -7,7 +7,7 @@ const corsConfig = {
   origin: [
     /^http:\/\/localhost(:[\d]+)?$/,
     /^https?:\/\/.*\.orb\.local$/,
-    String(process.env.FRONT_URI),
+    new RegExp(String(process.env.FRONT_URI)),
   ],
   optionsSuccessStatus: 200,
 };
