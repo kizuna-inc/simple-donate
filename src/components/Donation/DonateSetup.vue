@@ -16,8 +16,6 @@ import { BankType } from '@/modules/constant/bankType'
 
 import type { BankingInterface, noBankingInterface } from '@/modules/interface/install/banking'
 import type { DetailedInterface } from '@/modules/interface/install/detailed'
-import type { slipInterface } from '@/modules/interface/donate/slipPayload'
-import { DonatePayloadClass } from '@/modules/class/donate/payload'
 
 const props = defineProps<{
   user: DetailedInterface | null
@@ -163,6 +161,15 @@ const submitHandler = async () => {
     return
   }
 
+  if (token.value === '') {
+    Swal.fire({
+      icon: 'error',
+      title: 'มีบางอย่างผิดพลาด',
+      text: 'Captcha ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง',
+    })
+    return
+  }
+
   const slipUploadForm = new FormData()
 
   slipUploadForm.append(
@@ -172,6 +179,7 @@ const submitHandler = async () => {
   slipUploadForm.append('name', name.value)
   slipUploadForm.append('message', message.value)
   slipUploadForm.append('amount', String(amount.value))
+  slipUploadForm.append('method', String(props.bank?.type))
   slipUploadForm.append('token', token.value)
 
   const donateSend = await (
@@ -181,6 +189,8 @@ const submitHandler = async () => {
       body: slipUploadForm,
     })
   ).json()
+
+  console.log(donateSend)
 
   if (donateSend.status == 1) {
     isSubmit.value = !isSubmit.value
