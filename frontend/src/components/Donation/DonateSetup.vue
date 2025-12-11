@@ -161,6 +161,15 @@ const submitHandler = async () => {
     return
   }
 
+  if (token.value === '') {
+    Swal.fire({
+      icon: 'error',
+      title: 'มีบางอย่างผิดพลาด',
+      text: 'Captcha ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง',
+    })
+    return
+  }
+
   const slipUploadForm = new FormData()
 
   slipUploadForm.append(
@@ -170,6 +179,7 @@ const submitHandler = async () => {
   slipUploadForm.append('name', name.value)
   slipUploadForm.append('message', message.value)
   slipUploadForm.append('amount', String(amount.value))
+  slipUploadForm.append('method', String(props.bank?.type))
   slipUploadForm.append('token', token.value)
 
   const donateSend = await (
@@ -179,6 +189,8 @@ const submitHandler = async () => {
       body: slipUploadForm,
     })
   ).json()
+
+  console.log(donateSend)
 
   if (donateSend.status == 1) {
     isSubmit.value = !isSubmit.value
