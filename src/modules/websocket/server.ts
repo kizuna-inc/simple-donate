@@ -11,7 +11,11 @@ export const socketServer = async (app: Express) => {
 
   const io = new Server(server, {
     cors: {
-      origin: "localhost",
+      origin: [
+        /^http:\/\/localhost(:[\d]+)?$/,
+        /^https?:\/\/.*\.orb\.local$/,
+        new RegExp(String(process.env.SOCKET_URI)),
+      ],
     },
   });
 
