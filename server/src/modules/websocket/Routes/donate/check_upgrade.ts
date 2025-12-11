@@ -149,7 +149,9 @@ const detailCheck = async (
 
   const config = await client.bankingConfig.findFirst({
     where: {
-      type: Number(method),
+      type: {
+        equals: Number(method),
+      },
     },
   });
 
