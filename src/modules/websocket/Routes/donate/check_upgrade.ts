@@ -41,14 +41,12 @@ const turnstileCheck = async (token: string) => {
     );
 
     if (!verifyTurnstile.ok) {
-      resp.message = "turnstile send success";
+      resp.message = "turnstile send unsuccess";
       resp.payload = (await verifyTurnstile.json())["error-codes"];
 
       return false;
     } else {
-      resp.status = 1;
       resp.message = "turnstile send success";
-      resp.payload = await verifyTurnstile.json();
 
       return true;
     }
@@ -57,6 +55,7 @@ const turnstileCheck = async (token: string) => {
 
     console.error("Turnstile validation error:", err.message);
 
+    resp.status = 0;
     resp.message = "Turnstile Error";
     resp.payload = {
       "error-codes": ["internal-error"],
@@ -142,6 +141,7 @@ const detailCheck = async (
   } = req.body;
 
   if (name === "" || message === "" || amount <= 0 || method < 0) {
+    resp.status = 0;
     resp.message = "ยังมีบางช่องว่างอยู่ กรุณาลองใหม่อีกครั้ง";
     res.send(resp);
     return;
@@ -149,24 +149,27 @@ const detailCheck = async (
 
   const config = await client.bankingConfig.findFirst({
     where: {
-      type: method,
+      type: Number(method),
     },
   });
 
   if (config === undefined || config === null) {
+    resp.status = 0;
     resp.message = `ผู้ใช้ยังตั้งค่าไม่สมบูรณ์ กรุณาติดต่อเจ้าของเว็บ..`;
     return;
   }
 
   // Check Banking Detail
   if (!bankChecker(config, slip)) {
+    resp.status = 0;
     resp.message = "ปลายทางของสลิปไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง... :)";
     res.send(resp);
     return;
   }
 
   // Check Amount
-  if (slip.amount !== amount) {
+  if (slip.amount !== Number(amount)) {
+    resp.status = 0;
     resp.message = "จำนวนเงินไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง";
     res.send(resp);
     return;
@@ -180,6 +183,7 @@ const detailCheck = async (
   });
 
   if (dupe !== null) {
+    resp.status = 0;
     resp.message = "สลิปนี้เคยถูกใช้มาแล้ว กรุณาลองใหม่อีกครั้ง";
 
     res.send(resp);
@@ -192,13 +196,15 @@ const detailCheck = async (
       data: {
         name: name,
         message: message,
-        amount: amount,
+        amount: Number(amount),
         transactionID: slip.transRef,
       },
     });
 
     if (record === null) {
+      resp.status = 0;
       resp.message = "มีบางอย่างไม่คาดฝันเกิดขึ้น กรุณาติดต่อผู้ดูแลระบบ..";
+
       res.send(resp);
       return;
     }
@@ -225,6 +231,8 @@ const detailCheck = async (
   } catch (e: unknown) {
     var error = e as Error;
 
+    resp.status = 0;
+    resp.payload = null;
     resp.message = "Error : " + error.message;
     res.send(resp);
     return;
@@ -237,19 +245,24 @@ export const donateCheck = async (req: Request, res: Response) => {
 
   // Check body
   if (body === null || body === undefined) {
+    resp.status = 0;
     resp.message = "blank body";
     res.send(resp);
+
     return;
   }
 
   if (file === null || file === undefined) {
+    resp.status = 0;
     resp.message = "no file uploaded..";
     res.send(resp);
+
     return;
   }
 
   // Turnstile check
   if (req.body.token === undefined || req.body.token === null) {
+    resp.status = 0;
     resp.message = "no token provided";
     res.send(resp);
     return;
@@ -266,6 +279,7 @@ export const donateCheck = async (req: Request, res: Response) => {
   const slip: verifyPayload | null = await slipCheck(file);
 
   if (slip === null || slip === undefined) {
+    resp.status = 0;
     resp.message = "สลิปไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง";
     res.send(resp);
 
