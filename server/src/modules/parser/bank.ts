@@ -1,3 +1,4 @@
+import { receiveMessageOnPort } from "node:worker_threads";
 import { BankRespInterface } from "../interface/config/resp";
 import { verifyPayload } from "../interface/payload";
 
@@ -15,13 +16,23 @@ export const bankChecker = (config: BankRespInterface, slip: verifyPayload) => {
     return false;
   }
 
-  // ReceiverID
-  const newReceiverID = ReceiverID.slice(-4);
+  let newConfig = "";
 
-  // BankID
-  const newBankID = config.no.slice(-4);
+  if (/[0-9]+x+/i.test(ReceiverID)) {
+    newConfig = `${ReceiverID.replaceAll("x", "")}${Array.from({
+      length: ReceiverID.split("x").length - 1,
+    })
+      .fill("x")
+      .join("")}`;
+  }
 
-  if (newBankID !== newReceiverID) {
+  if (/x+[0-9]+/i.test(ReceiverID)) {
+    newConfig = `${Array.from({ length: ReceiverID.split("x").length - 1 })
+      .fill("x")
+      .join("")}${ReceiverID.replaceAll("x", "")}`;
+  }
+
+  if (ReceiverID !== newConfig) {
     return false;
   }
 
