@@ -16,8 +16,6 @@ import { BankType } from '@/modules/constant/bankType'
 
 import type { BankingInterface, noBankingInterface } from '@/modules/interface/install/banking'
 import type { DetailedInterface } from '@/modules/interface/install/detailed'
-import type { slipInterface } from '@/modules/interface/donate/slipPayload'
-import { DonatePayloadClass } from '@/modules/class/donate/payload'
 
 const props = defineProps<{
   user: DetailedInterface | null
