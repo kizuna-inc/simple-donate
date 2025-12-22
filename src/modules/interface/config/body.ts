@@ -11,6 +11,7 @@ export interface DetailInterface {
 }
 
 export interface BankingInterface {
+  id?: number | undefined;
   name: string;
   no: string;
   type: number;
@@ -21,4 +22,10 @@ export interface BodyInterface {
   user: UserLoginInterface;
   detailed: DetailInterface;
   banking: BankingInterface;
+  min_amount: number;
+}
+
+export interface ConfigInterface {
+  minAmount: number;
+  order: number[];
 }

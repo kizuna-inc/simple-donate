@@ -216,7 +216,7 @@ const detailCheck = async (
       username: name,
       money: parseFloat(String(amount)).toFixed(2),
       message: message,
-      template: streamTemplate,
+      template: await streamTemplate,
     };
 
     console.log(payload);
