@@ -1,4 +1,4 @@
-import { Express, Request, response, Response } from "express";
+import { Express, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 
 import { reResp } from "../../../../modules/response/main";
