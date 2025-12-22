@@ -38,6 +38,7 @@
 
       socket.on(`${config.room}_screen`, (msg) => {
         const data = JSON.parse(JSON.stringify(msg));
+        console.log(data)
 
         let item = document.querySelector(".donate-item");
 
@@ -47,7 +48,9 @@
         imgElement.setAttribute("src", imageLocation);
 
         const textElement = document.querySelector(".donate-item h1");
-        const textLocation = `${data.template.text[0]} ${data.username} ${data.template.text[1]} ${parseFloat(data.money).toFixed(2)}`;
+        // const textLocation = `${data.template.text[0]} ${data.username} ${data.template.text[1]} ${parseFloat(data.money).toFixed(2)}`;
+        const textLocation = data.template.text.replace('--amount--', String(parseFloat(data.money).toFixed(2))).replace('--user--', data.username)
+
         
         textElement.innerHTML = textLocation
 
