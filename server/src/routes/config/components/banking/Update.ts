@@ -3,7 +3,6 @@ import { reResp } from "../../../../modules/response/main";
 import { BankingInterface } from "../../../../modules/interface/config/body";
 import { client } from "../../../../modules/db/client";
 import { jwtAuthFunc } from "../../../../modules/providers/auth";
-import { equal } from "assert";
 
 export const bankingUpdate = async (app: Express) => {
   app.post(
