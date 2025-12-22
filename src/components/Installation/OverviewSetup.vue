@@ -22,8 +22,6 @@ const bgLink = ref<string>('')
 
 const bankConfig = ref<BankingInterface | null | undefined>()
 
-// console.log(payload)
-
 onMounted(() => {
   if (!Array.isArray(props.payload?.banking)) {
     bankConfig.value = props.payload?.banking

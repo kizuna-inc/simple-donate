@@ -6,4 +6,5 @@ export interface OverviewInterface {
   user: UserInterface | null
   detailed: DetailedInterface | null
   banking: BankingInterface | BankingInterface[] | null
+  min_amount: number | undefined
 }

@@ -2,7 +2,6 @@
 import { onMounted, ref, watch } from 'vue'
 import { anyId } from 'promptparse/generate'
 import QRCode from 'qrcode-svg'
-import axios from 'axios'
 import Swal from 'sweetalert2'
 import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import VueTurnstile from 'vue-turnstile'
@@ -13,7 +12,6 @@ import PromptPayGen from './PromptPayGen.vue'
 import BankingGen from './BankingGen.vue'
 
 import { BankType } from '@/modules/constant/bankType'
-
 import type { BankingInterface, noBankingInterface } from '@/modules/interface/install/banking'
 import type { DetailedInterface } from '@/modules/interface/install/detailed'
 
@@ -21,6 +19,7 @@ const props = defineProps<{
   user: DetailedInterface | null
   bank: BankingInterface | null
   fullBank: BankingInterface[] | undefined
+  minAmount: number | undefined
   state: number | ''
   upState: (id: number) => void
 }>()
@@ -28,6 +27,7 @@ const name = ref<string>('')
 const message = ref<string>('')
 const amount = ref<number | ''>(10)
 const token = ref<string>('')
+const minAmount = ref<number>(10)
 
 const type = ref<'MSISDN' | 'NATID' | 'EWALLETID' | 'BANKACC'>('MSISDN')
 const qrCode = ref<string>('')
@@ -45,104 +45,6 @@ const bgLink = ref<string>('')
 const pfpLink = ref<string>('')
 const siteKey = ref<string>(import.meta.env.VITE_TURNSTILE_SITE_KEY)
 
-const slipStore = async (file: File) => {
-  const buffer = await file.arrayBuffer()
-  const blob = new Blob([buffer], { type: file.type })
-
-  slipName.value = file.name
-  slipPreview.value = URL.createObjectURL(blob)
-
-  slipImage.value = blob
-}
-
-const slipHandler = async (e: Event) => {
-  const target = e.target as HTMLInputElement
-  const file = target.files?.[0]
-
-  if (file !== undefined && file !== null) {
-    await slipStore(file)
-  }
-}
-
-const slipDrop = async (e: DragEvent) => {
-  slipActive.value = false
-
-  if (e.dataTransfer) {
-    let file = Array.from(e.dataTransfer.files)[0]
-
-    if (file !== undefined && file !== null) {
-      await slipStore(file)
-    }
-  }
-}
-
-const slipClick = () => {
-  slipElement.value?.click()
-}
-
-const qrCodeGen = () => {
-  if (amount.value === '') {
-    amount.value = 0
-  }
-
-  if (amount.value > 0 && props.bank !== null) {
-    var newAmount = amount.value
-
-    if (amount.value < 10) {
-      newAmount = 10
-    }
-
-    if (props.bank.no === null) return
-
-    switch (props.bank.no.length) {
-      case 13:
-        type.value = 'NATID'
-        break
-
-      case 15:
-        type.value = 'EWALLETID'
-        break
-
-      default:
-        type.value = 'MSISDN'
-        break
-    }
-
-    const payload = anyId({
-      type: type.value,
-      target: props.bank.no,
-      amount: newAmount,
-    })
-
-    const qrcode = new QRCode({
-      content: payload,
-      container: 'svg-viewbox',
-      join: true,
-    })
-
-    qrCode.value = qrcode.svg()
-  }
-}
-
-const toggleRef = () => {
-  isHide.value = !isHide.value
-}
-
-const clearForm = () => {
-  isSubmit.value = !isSubmit.value
-
-  // Clear other form
-  name.value = ''
-  message.value = ''
-  amount.value = 10
-
-  // Clear slip
-  slipName.value = ''
-  slipPreview.value = ''
-  slipElement.value = null
-  slipImage.value = null
-}
-
 const submitHandler = async () => {
   if (slipImage.value === null) {
     return
@@ -152,7 +54,7 @@ const submitHandler = async () => {
     return
   }
 
-  if (amount.value < 10) {
+  if (amount.value < minAmount.value) {
     Swal.fire({
       icon: 'error',
       title: 'มีบางอย่างผิดพลาด',
@@ -207,6 +109,7 @@ onMounted(() => {
   if (props.user !== null) {
     bgLink.value = `${import.meta.env.VITE_API_ENDPOINT}/${props.user.backgroundImage}`
     pfpLink.value = `${import.meta.env.VITE_API_ENDPOINT}/${props.user.profileImage}`
+    minAmount.value = props.minAmount || 10
 
     qrCodeGen()
   }
@@ -218,6 +121,98 @@ watch(amount, () => {
   }
   qrCodeGen()
 })
+
+const slipStore = async (file: File) => {
+  const buffer = await file.arrayBuffer()
+  const blob = new Blob([buffer], { type: file.type })
+
+  slipName.value = file.name
+  slipPreview.value = URL.createObjectURL(blob)
+
+  slipImage.value = blob
+}
+const slipHandler = async (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+
+  if (file !== undefined && file !== null) {
+    await slipStore(file)
+  }
+}
+const slipDrop = async (e: DragEvent) => {
+  slipActive.value = false
+
+  if (e.dataTransfer) {
+    let file = Array.from(e.dataTransfer.files)[0]
+
+    if (file !== undefined && file !== null) {
+      await slipStore(file)
+    }
+  }
+}
+const slipClick = () => {
+  slipElement.value?.click()
+}
+const qrCodeGen = () => {
+  if (amount.value === '') {
+    amount.value = 0
+  }
+
+  if (amount.value > 0 && props.bank !== null) {
+    var newAmount = amount.value
+
+    if (amount.value < 10) {
+      newAmount = 10
+    }
+
+    if (props.bank.no === null) return
+
+    switch (props.bank.no.length) {
+      case 13:
+        type.value = 'NATID'
+        break
+
+      case 15:
+        type.value = 'EWALLETID'
+        break
+
+      default:
+        type.value = 'MSISDN'
+        break
+    }
+
+    const payload = anyId({
+      type: type.value,
+      target: props.bank.no,
+      amount: newAmount,
+    })
+
+    const qrcode = new QRCode({
+      content: payload,
+      container: 'svg-viewbox',
+      join: true,
+    })
+
+    qrCode.value = qrcode.svg()
+  }
+}
+const toggleRef = () => {
+  isHide.value = !isHide.value
+}
+const clearForm = () => {
+  isSubmit.value = !isSubmit.value
+
+  // Clear other form
+  name.value = ''
+  message.value = ''
+  amount.value = 10
+
+  // Clear slip
+  slipName.value = ''
+  slipPreview.value = ''
+  slipElement.value = null
+  slipImage.value = null
+}
 
 // Active animation
 const slipDragOver = (e: DragEvent) => {
@@ -293,7 +288,12 @@ const slipDragLeave = (e: DragEvent) => {
 
               <div class="donate-form">
                 <div>
-                  <label for="anount">จำนวนเงินที่ต้องการ</label>
+                  <p>
+                    จำนวนเงินที่ต้องการ
+                    <span style="display: inline" class="text-danger">
+                      (โดเนทขั้นต่ำ {{ parseFloat(String(minAmount)).toFixed(2) }} บาท)
+                    </span>
+                  </p>
                   <input type="number" v-model="amount" name="amount" id="amount" />
                 </div>
 
