@@ -16,7 +16,7 @@ export const donateTest = async (res: Response) => {
     username: "test",
     money: 10.0,
     message: "test donation alert!",
-    template: streamTemplate,
+    template: await streamTemplate(),
   };
 
   await sQueue.add(

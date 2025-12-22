@@ -5,6 +5,8 @@ import copy from '@/assets/image/copy.png'
 
 import type { BankingInterface } from '@/modules/interface/install/banking'
 
+import { bankParser } from '@/modules/functions/bankParser'
+
 const props = defineProps<{
   bank: BankingInterface | null
   amount: number
@@ -18,26 +20,6 @@ const copyClipboard = async (text: string | null) => {
       title: 'สำเร็จ',
       text: 'คัดลอกเลขบัญชีสำเร็จ',
     })
-  }
-}
-
-const bankParser = (no: string | undefined | null) => {
-  if (no !== undefined && no !== null) {
-    let slugList = [2, 3, 8]
-
-    let rtn = ''
-
-    for (let i = 0; i < no.length; i++) {
-      rtn += no[i]
-
-      if (slugList.indexOf(i) !== -1) {
-        rtn += '-'
-      }
-    }
-
-    return rtn
-  } else {
-    return undefined
   }
 }
 </script>

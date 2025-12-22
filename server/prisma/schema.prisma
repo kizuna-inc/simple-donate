@@ -20,7 +20,7 @@ model BankingConfig {
 }
 
 model Transection {
-  id            String   @id @db.Uuid @default(uuid())
+  id            String   @id @default(uuid()) @db.Uuid
   name          String
   amount        Int
   transactionID String   @unique
@@ -48,4 +48,29 @@ model UserConfig {
   create_at       DateTime @default(now()) @db.Timestamptz(6)
   update_at       DateTime @default(now()) @db.Timestamptz(6)
   User            User     @relation(fields: [user_id], references: [id])
+}
+
+model StreamAlert {
+  id        Int      @id @default(autoincrement())
+  image     String   @default("static/upload/cdn/alert.gif")
+  sound     String   @default("static/upload/cdn/alert.mp3")
+  text      String   @default("thank you --user-- for --amount-- THB")
+  create_at DateTime @default(now()) @db.Timestamptz(6)
+  update_at DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model StreamConfig {
+  id            Int      @id @default(autoincrement())
+  min_amount    Int      @default(10)
+  banking_order Int[]
+  create_at     DateTime @default(now()) @db.Timestamptz(6)
+  update_at     DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model CustomGift {
+  id        Int      @id @default(autoincrement())
+  amount    Int
+  image     String
+  create_at DateTime @default(now()) @db.Timestamptz(6)
+  update_at DateTime @default(now()) @db.Timestamptz(6)
 }

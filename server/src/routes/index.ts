@@ -2,6 +2,7 @@ import { Express, Request, Response } from "express";
 
 import { setUpRoutes } from "./config/setup";
 import { callConfigRoutes } from "./config/callConfig";
+import { componentsController } from "./config/components.controller";
 
 import { LoginRoutes } from "./auth/login";
 import { LoginStatusRoute } from "./auth/status";
@@ -18,6 +19,9 @@ export const RouteController = async (app: Express) => {
   // Config
   await setUpRoutes(app);
   await callConfigRoutes(app);
+
+  // Edit Config
+  await componentsController(app);
 
   // Authentication
   await LoginRoutes(app);

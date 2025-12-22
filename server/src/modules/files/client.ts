@@ -6,3 +6,6 @@ export const upload = multer({
 export const imgUpload = multer({
   dest: "static/upload/cdn",
 });
+export const overlayUpload = multer({
+  dest: "static/upload/overlay",
+});

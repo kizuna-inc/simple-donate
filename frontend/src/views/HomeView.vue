@@ -92,6 +92,7 @@ onMounted(async () => {
       "
       :upState="switchState"
       :state="state"
+      :minAmount="config !== undefined && config !== null ? config.min_amount : undefined"
     />
   </main>
 </template>
