@@ -11,7 +11,7 @@ onMounted(async () => {
   const fetchData = await fetch(`${import.meta.env.VITE_API_ENDPOINT}/api/dashboard/transaction`, {
     method: 'get',
     headers: new Headers({
-      Authorization: `Bearer ${window.sessionStorage.getItem('token')}`,
+      Authorization: `${window.sessionStorage.getItem('token')}`,
     }),
   })
 
@@ -28,8 +28,6 @@ onMounted(async () => {
 
     return
   }
-
-  console.log(fetchResponse)
 
   transactionData.value = fetchResponse.payload
 })

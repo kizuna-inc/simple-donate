@@ -64,6 +64,10 @@ onMounted(() => {
       <History v-if="isMin" fill="#f5f5f5" style="width: 30px" />
       <span v-else>รายการย้อนหลัง</span>
     </RouterLink>
+    <RouterLink to="/admin/config" class="glass-btn">
+      <History v-if="isMin" fill="#f5f5f5" style="width: 30px" />
+      <span v-else>การตั้งค่า</span>
+    </RouterLink>
     <button type="button" class="glass-btn logout" @click="logOut">
       <Exit v-if="isMin" fill="#f5f5f5" style="width: 30px" />
       <span v-else>ออกจากระบบ</span>

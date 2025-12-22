@@ -1,4 +1,5 @@
 export interface BankingInterface {
+  id?: number | undefined
   name: string | null
   no: string | null
   type: number | null

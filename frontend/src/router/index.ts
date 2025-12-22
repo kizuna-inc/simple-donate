@@ -12,6 +12,7 @@ import ErrorView from '@/views/ErrorView.vue'
 import BackOfficeView from '@/views/BackOffice/BackOfficeView.vue'
 import DashboardView from '@/views/BackOffice/SideView/DashboardView.vue'
 import HistoryView from '@/views/BackOffice/SideView/HistoryView.vue'
+import ConfigView from '@/views/BackOffice/SideView/ConfigView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,6 +41,11 @@ const router = createRouter({
           path: 'history',
           name: 'admin history',
           component: HistoryView,
+        },
+        {
+          path: 'config',
+          name: 'admin config',
+          component: ConfigView,
         },
       ],
     },
