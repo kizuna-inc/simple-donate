@@ -7,7 +7,7 @@ services:
       args:
         VITE_API_ENDPOINT: 'http://localhost:3000'
         VITE_TURNSTILE_SITE_KEY: '<TURNSTILE SITE KEY>'
-        VITE_SOCKET: 'http://anonymousd:8080'
+        VITE_API_SOCKET: 'http://anonymousd:8080'
         VITE_RECOVERY: ''
     ports:
       - 4173:4173
