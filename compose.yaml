@@ -22,7 +22,7 @@ services:
       args:
         VITE_API_ENDPOINT: ${BACKEND_DOMAIN_NAME}
         VITE_TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY}
-        VITE_API_SOCKET: ${SOCKET_DOMAIN_NAME}
+        VITE_SOCKET: ${SOCKET_DOMAIN_NAME}
         VITE_RECOVERY: ${RECOVERY}
     networks:
       simple_network:
@@ -53,6 +53,8 @@ services:
       - RECOVERY=${RECOVERY}
     # env_file:
     #   - server/.env
+    volumes:
+      - ./files/backend/static:/app/static
     depends_on:
       db:
         condition: service_healthy
