@@ -7,7 +7,6 @@ services:
       args:
         VITE_API_ENDPOINT: ${BACKEND_DOMAIN_NAME}
         VITE_TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY}
-        VITE_SOCKET: ${SOCKET_DOMAIN_NAME}
         VITE_RECOVERY: ${RECOVERY}
     networks:
       simple_network:
