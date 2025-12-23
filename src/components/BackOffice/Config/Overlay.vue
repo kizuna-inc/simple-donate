@@ -94,7 +94,7 @@ const soundDragLeave = (e: DragEvent) => {
 
 const textElement = ref<string>('')
 
-const link = `${import.meta.env.VITE_SOCKET}/screen`
+const link = `${import.meta.env.VITE_API_ENDPOINT}/socket/screen`
 
 const testPing = () => {
   fetch(`${import.meta.env.VITE_API_ENDPOINT}/api/socket/test`)

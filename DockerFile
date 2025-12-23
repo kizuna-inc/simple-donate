@@ -3,7 +3,6 @@ FROM node:24-alpine
 ARG NODE_ENV="production"
 ARG VITE_API_ENDPOINT
 ARG VITE_TURNSTILE_SITE_KEY
-ARG VITE_SOCKET
 ARG VITE_RECOVERY
 
 WORKDIR /app
@@ -15,7 +14,6 @@ RUN pnpm i --frozen-lockfile
 
 RUN echo "VITE_API_ENDPOINT=${VITE_API_ENDPOINT}" >> .env
 RUN echo "VITE_TURNSTILE_SITE_KEY=${VITE_TURNSTILE_SITE_KEY}" >> .env
-RUN echo "VITE_SOCKET=${VITE_SOCKET}" >> .env
 RUN echo "VITE_RECOVERY=${VITE_RECOVERY}" >> .env
 
 RUN pnpm run build-only --mode ${NODE_ENV}
