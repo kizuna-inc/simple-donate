@@ -1,6 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Thai:100,200,300,regular,500,600,700);
 
-@import url("/src/css/animation.css");
+@import url("/socket/src/css/animation.css");
 
 * {
   transition: all 0.6s;
@@ -58,7 +58,8 @@ body {
   left: 50%;
   transform: translate(-50%, 0);
 
-  h1, h3 {
+  h1,
+  h3 {
     margin: 0;
   }
 

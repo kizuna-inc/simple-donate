@@ -1,19 +1,4 @@
 services:
-  socket-nginx:
-    container_name: socket-nginx
-    build:
-      context: ./socket
-      dockerfile: DockerFile
-      args:
-        server: ${BACKEND_DOMAIN_NAME}
-        room_name: ${SOCKET_ROOM_NAME} # set it same with backend
-    networks:
-      simple_network:
-        ipv4_address: 172.30.10.12
-    ports:
-      - ${SOCKET_PORT}:80
-    restart: always
-
   frontend:
     container_name: vue-prototype
     build:
@@ -22,7 +7,6 @@ services:
       args:
         VITE_API_ENDPOINT: ${BACKEND_DOMAIN_NAME}
         VITE_TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY}
-        VITE_API_SOCKET: ${SOCKET_DOMAIN_NAME}
         VITE_RECOVERY: ${RECOVERY}
     networks:
       simple_network:
@@ -53,6 +37,8 @@ services:
       - RECOVERY=${RECOVERY}
     # env_file:
     #   - server/.env
+    volumes:
+      - ./files/backend/static/upload:/app/static/upload
     depends_on:
       db:
         condition: service_healthy
