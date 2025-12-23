@@ -16,6 +16,14 @@ export const RouteController = async (app: Express) => {
     res.send("yey :D");
   });
 
+  app.get("/config", (_req: Request, res: Response) => {
+    const config = {
+      room: process.env.ROOM_NAME,
+    };
+
+    res.send(config);
+  });
+
   // Config
   await setUpRoutes(app);
   await callConfigRoutes(app);
