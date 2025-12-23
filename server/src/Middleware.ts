@@ -17,10 +17,17 @@ let staticPath = path.resolve(
   process.env.MODE === "PROD" ? "../../static" : "../static"
 );
 
+let socketPath = path.resolve(
+  __dirname,
+  process.env.MODE === "PROD" ? "../../socket" : "../socket"
+);
+
 export const Middleware = async (app: Express) => {
   app.use(cors(corsConfig));
 
   app.use("/static", express.static(staticPath));
+  app.use("/socket", express.static(socketPath));
+
   console.log(process.env.MODE);
   console.log(staticPath);
 
