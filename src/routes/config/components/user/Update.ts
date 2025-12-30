@@ -143,11 +143,7 @@ export const UserUpdate = async (app: Express) => {
     }
   );
 
-  if (
-    process.env.RECOVERY !== "" &&
-    process.env.RECOVERY !== undefined &&
-    process.env.RECOVERY !== null
-  ) {
+  if (process.env.RECOVERY === "TRUE") {
     app.post(
       "/api/config/user/reset/login",
       async (req: Request, res: Response) => {
