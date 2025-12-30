@@ -33,6 +33,7 @@ services:
       - slipKEY=${SLIP2SURE_KEY} # Slip 2 Sure API KEY
       - JWT_SECERT=${JWT_SECERT} # using openssl rand -hex 12
       - FRONT_URI=${FRONTEND_DOMAIN_NAME}
+      - TURNSTILE_SECRET=${TURNSTILE_SECRET_KEY}
       - MODE=${MODE} # NOT CHANGE THIS VALUE!!
       - RECOVERY=${RECOVERY}
     # env_file:

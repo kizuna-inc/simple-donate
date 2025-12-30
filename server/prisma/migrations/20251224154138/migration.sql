@@ -1,0 +1,12 @@
+-- CreateTable
+CREATE TABLE "Goal" (
+    "id" SERIAL NOT NULL,
+    "current_amount" INTEGER NOT NULL,
+    "target_amount" INTEGER NOT NULL,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
+    "end_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "create_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "update_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Goal_pkey" PRIMARY KEY ("id")
+);

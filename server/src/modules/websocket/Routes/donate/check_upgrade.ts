@@ -216,7 +216,7 @@ const detailCheck = async (
       username: name,
       money: parseFloat(String(amount)).toFixed(2),
       message: message,
-      template: await streamTemplate,
+      template: await streamTemplate(),
     };
 
     console.log(payload);
@@ -273,6 +273,8 @@ export const donateCheck = async (req: Request, res: Response) => {
   const turnstileStatus = await turnstileCheck(req.body.token);
 
   if (!turnstileStatus) {
+    resp.status = 0;
+    resp.message = "turnstile error";
     res.send(resp);
     return;
   }

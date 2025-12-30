@@ -17,24 +17,25 @@ make a self-hosted donation site easier than it should be :D
 
 - Prototype
 
-  - JS: Vue.js + typescript + vite.js
-  - CSS: Bootstrap 5
+  - JS: `Vue.js` + `typescript` + `vite.js`
+  - CSS: `Bootstrap 5`
 
 - Production
 
-  - JS: Next.js + typescript
-  - CSS: tailwind.css
-
-- Streaming Overlay
-  - HTML, CSS, JS (Vanilla + Socket.io) // >:D
+  - JS: `Next.js` + `typescript`
+  - CSS: `tailwind.css`
 
 ### BackEnd
 
-- express.js, typescript
+- `express.js`, `typescript`
 - ORM
-  - Prisma
+  - `Prisma`
 - DB
-  - PostgreSQL
+
+  - `PostgreSQL`
+
+- w/ Streaming Overlay
+  - using `HTML`, `CSS`, `JS (Vanilla + Socket.io)` // >:D
 
 ## Installation & Usage (with documentation)
 
